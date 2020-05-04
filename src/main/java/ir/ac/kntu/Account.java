@@ -7,7 +7,6 @@ public class Account {
     private Long number;
     private Double balance;
 
-    //Constructor has been created for you
     public Account(long number, double balance) {
         this.number = number;
         this.balance = balance;
@@ -31,7 +30,6 @@ public class Account {
         return balance;
     }
 
-    // Don't mind the following method, you will learn about it in the next week
     public String toString() {
         return "Account{" +
                 "number=" + number +

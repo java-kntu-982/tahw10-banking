@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author S.Shayan Daneshvar
  */
-@SuppressWarnings("JavaReflectionMemberAccess")
+@SuppressWarnings(value = "JavaReflectionMemberAccess")
 public class BankTest {
     private final long ID1 = 1L, ID2 = 2L, ID3 = 3L, ID4 = 4L, ID5 = 5L;
     private final double BAL1 = 200d, BAL2 = 220d, BAL3 = 900d, BAL4 = 1204d,

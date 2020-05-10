@@ -40,7 +40,7 @@ public class BankTest {
 
     @Test
     public void findAccountByNumber() throws NoSuchMethodException,
-            InvocationTargetException, IllegalAccessException {
+            InvocationTargetException, IllegalAccessException, NoSuchAccountNumberException {
         final Account ACC = bank.findAccountByNumber(ID1);
         final Account ACC3 = bank.findAccountByNumber(ID3);
         final Account ACC5 = bank.findAccountByNumber(ID5);
@@ -61,14 +61,19 @@ public class BankTest {
 
     @Test
     public void deposit() throws NoSuchMethodException,
-            InvocationTargetException, IllegalAccessException {
+            InvocationTargetException, IllegalAccessException, NoSuchAccountNumberException {
         Account acc2 = bank.findAccountByNumber(ID2);
         final Method DEPOSIT = Bank.class
                 .getDeclaredMethod("deposit", long.class, double.class);
         DEPOSIT.setAccessible(true);
         Assertions.assertDoesNotThrow(() -> DEPOSIT.invoke(bank, ID2, 100));
-        Assertions.assertThrows(OperationFailedException.class,
-                () -> DEPOSIT.invoke(bank, 12341L, 200));
+        Assertions.assertThrows(OperationFailedException.class, () -> {
+            try {
+                DEPOSIT.invoke(bank, 12341L, 200);
+            } catch (InvocationTargetException e) {
+                throw e.getCause();
+            }
+        });
         DEPOSIT.setAccessible(false);
         assertEquals((double) acc2.getClass().
                 getDeclaredMethod("getBalance").invoke(acc2), (BAL2 + 100));
@@ -76,13 +81,20 @@ public class BankTest {
 
     @Test
     public void withdraw() throws NoSuchMethodException,
-            InvocationTargetException, IllegalAccessException {
+            InvocationTargetException, IllegalAccessException, NoSuchAccountNumberException {
         Account acc4 = bank.findAccountByNumber(ID4);
         final Method WITHDRAW = Bank.class.getDeclaredMethod("withdraw", long.class, double.class);
         WITHDRAW.setAccessible(true);
         Assertions.assertDoesNotThrow(() -> WITHDRAW.invoke(bank, ID4, 100));
         Assertions.assertThrows(OperationFailedException.class, () ->
-                WITHDRAW.invoke(bank, 12141L, 120));
+        {
+            try {
+                WITHDRAW.invoke(bank, 12141L, 120);
+
+            } catch (InvocationTargetException e) {
+                throw e.getCause();
+            }
+        });
         WITHDRAW.setAccessible(false);
         assertEquals((double) acc4.getClass().getDeclaredMethod("getBalance")
                 .invoke(acc4), (BAL4 - 100));
@@ -90,7 +102,7 @@ public class BankTest {
 
     @Test
     public void handleTransaction1() throws NoSuchMethodException,
-            InvocationTargetException, IllegalAccessException {
+            InvocationTargetException, IllegalAccessException, NoSuchAccountNumberException {
         final long amount1 = 100L;
         boolean test = bank.handleTransaction(amount1, ID1, ID3);
         Account acc1 = bank.findAccountByNumber(ID1);
@@ -104,7 +116,7 @@ public class BankTest {
 
     @Test
     public void handleTransaction2() throws NoSuchMethodException,
-            InvocationTargetException, IllegalAccessException {
+            InvocationTargetException, IllegalAccessException, NoSuchAccountNumberException {
         final long amount = 991L;
         boolean test2 = bank.handleTransaction(amount, ID5, ID3);
         assertFalse(test2);
